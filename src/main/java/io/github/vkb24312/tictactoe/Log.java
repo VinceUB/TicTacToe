@@ -9,13 +9,17 @@ public class Log {
     void log(String s){
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
-        s = stackTraceElements[2] + ": " + s;
+        String callingClass = stackTraceElements[2] + ": ";
 
-        System.out.println(s);
+        s = callingClass + "\n\t" + s.replace("\n", "\r\n\t");
+
+        if(isDebug){
+            System.out.println(s);
+        }
 
         try {
             FileWriter fw = new FileWriter(log, true);
-            fw.write(s + "\n");
+            fw.write(s + "\r\n");
             fw.close();
         } catch (IOException e){
             e.printStackTrace();
@@ -35,7 +39,7 @@ public class Log {
         File testFile;
         do{
             i++;
-            testFile = new File(path, "log " + i);
+            testFile = new File(path, "log " + i + ".txt");
         } while (testFile.exists());
 
         System.out.println(date);
@@ -45,7 +49,15 @@ public class Log {
 
     private File log;
 
-    public Log(){
+    Log(){
         log = logCreator();
+        isDebug = false;
     }
+
+    Log(boolean isDebug){
+        log = logCreator();
+        this.isDebug = isDebug;
+    }
+
+    private boolean isDebug;
 }
