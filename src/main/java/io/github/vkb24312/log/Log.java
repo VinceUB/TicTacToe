@@ -1,4 +1,4 @@
-package io.github.vkb24312.tictactoe;
+package io.github.vkb24312.log;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class Log {
-    void log(String s){
+    public void log(String s){
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
         String callingClass = stackTraceElements[2] + ": ";
@@ -49,12 +49,12 @@ public class Log {
 
     private File log;
 
-    Log(){
+    public Log(){
         log = logCreator();
         isDebug = false;
     }
 
-    Log(boolean isDebug){
+    public Log(boolean isDebug){
         log = logCreator();
         this.isDebug = isDebug;
     }

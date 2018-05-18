@@ -1,23 +1,25 @@
 package io.github.vkb24312.tictactoe;
 
+import io.github.vkb24312.log.Log;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
-    Board board = new Board();
-    Player[] players = new Player[]{new Player('X'), new Player('O')};
-    ArrayList<Move> moves = new ArrayList<>();
+    private Board board = new Board();
+    private Player[] players = new Player[]{new Player('X'), new Player('O')};
+    private ArrayList<Move> moves = new ArrayList<>();
     static Log log = new Log();
-    Scanner userInput = new Scanner(System.in);
+    private Scanner userInput = new Scanner(System.in);
 
     public static void main(String args[]){
         Game game = new Game();
         game.mainMethod();
     }
 
-    int mainMethod(){
+    private int mainMethod(){
         int winner = -1;
         while(winner<0){
             for (int i = 0; i < players.length; i++) {
@@ -124,20 +126,20 @@ class Board {
     Board(Player[][] board){
         if(board.length!=3) throw new IllegalArgumentException();
 
-        for (int i = 0; i < board.length; i++) {
-            if(board[i].length!=3) throw new IllegalArgumentException();
+        for (Player[] aBoard : board) {
+            if (aBoard.length != 3) throw new IllegalArgumentException();
         }
 
         this.board = board;
     }
 
-    Player[][] board;
+    private Player[][] board;
 
     String printBoard(){
         StringBuilder out = new StringBuilder(new String(new char[]{'\u0000'}));
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                out.append(board[i][j].mark).append(" ");
+        for (Player[] aBoard : board) {
+            for (Player anABoard : aBoard) {
+                out.append(anABoard.mark).append(" ");
             }
             out.append("\n");
         }
@@ -150,8 +152,8 @@ class Board {
     }
 
     boolean checkWinner(Player player) {
-        for (int i = 0; i < board.length; i++) {
-            if (board[i][0].equals(player) & board[i][1].equals(player) & board[i][2].equals(player)) return true;
+        for (Player[] aBoard : board) {
+            if (aBoard[0].equals(player) & aBoard[1].equals(player) & aBoard[2].equals(player)) return true;
         }
 
         for (int i = 0; i < board.length; i++) {
@@ -159,16 +161,15 @@ class Board {
         }
 
         if (board[0][0].equals(player) & board[1][1].equals(player) & board[2][2].equals(player)) return true;
-        if (board[0][2].equals(player) & board[1][1].equals(player) & board[2][0].equals(player)) return true;
+        return board[0][2].equals(player) & board[1][1].equals(player) & board[2][0].equals(player);
 
-        return false;
     }
 
     boolean getValid(Move move){
         return board[move.move[0]][move.move[1]].equals(blankPlayer);
     }
 
-    Player blankPlayer = new Player('.');
+    private Player blankPlayer = new Player('.');
 
 }
 
