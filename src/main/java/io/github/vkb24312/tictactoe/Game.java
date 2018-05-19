@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class Game {
     private Board board = new Board();
     private Player[] players = new Player[]{new Player('X'), new Player('O')};
-    private ArrayList<Move> moves = new ArrayList<>();
     static Log log = new Log();
     private Scanner userInput = new Scanner(System.in);
 
@@ -24,7 +23,7 @@ public class Game {
         while(winner<0){
             for (int i = 0; i < players.length; i++) {
                 print(board.printBoard());
-                board.checkWinner(players[i]);
+                board.isWinForPlayer(players[i]);
                 Move move = null;
                 boolean isNull;
 
@@ -39,22 +38,22 @@ public class Game {
                     }
                 } while(isNull);
 
-                moves.add(move);
+                board.moves.add(move);
                 //</editor-fold>
 
-                if(board.checkWinner(players[i])){
+                if(board.isWinForPlayer(players[i])){
                     print(board.printBoard());
                     winner = i;
                     finishGame(winner);
                     break;
-                } else if(moves.size()>=9) {
+                } else if(board.isDraw()) {
                     finishGame(-1);
                     break;
                 }
             }
         }
         userInput.close();
-        log.log(moves.toString());
+        log.log(board.moves.toString());
         return winner;
     }
 
@@ -94,7 +93,7 @@ class Player {
         }
 
         try {
-            if (board.getValid(out)) {
+            if (board.isValid(out)) {
                 Game.log.log("Chosen move " + move);
                 return out;
             } else {
@@ -113,14 +112,12 @@ class Player {
 }
 
 class Board {
+    ArrayList<Move> moves = new ArrayList<>();
+
     Board(){
         board = new Player[3][3];
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j]  = blankPlayer;
-            }
-        }
+        for (int i = 0; i < board.length; i++) for (int j = 0; j < board[i].length; j++) board[i][j] = blankPlayer;
     }
 
     Board(Player[][] board){
@@ -151,21 +148,24 @@ class Board {
         board[move.move[0]][move.move[1]] = move.player;
     }
 
-    boolean checkWinner(Player player) {
+    boolean isWinForPlayer(Player p) {
         for (Player[] aBoard : board) {
-            if (aBoard[0].equals(player) & aBoard[1].equals(player) & aBoard[2].equals(player)) return true;
+            if (aBoard[0].equals(p) & aBoard[1].equals(p) & aBoard[2].equals(p)) return true;
         }
 
         for (int i = 0; i < board.length; i++) {
-            if (board[0][i].equals(player) & board[1][i].equals(player) & board[2][i].equals(player)) return true;
+            if (board[0][i].equals(p) & board[1][i].equals(p) & board[2][i].equals(p)) return true;
         }
 
-        if (board[0][0].equals(player) & board[1][1].equals(player) & board[2][2].equals(player)) return true;
-        return board[0][2].equals(player) & board[1][1].equals(player) & board[2][0].equals(player);
+        if (board[0][0].equals(p) & board[1][1].equals(p) & board[2][2].equals(p)) return true;
+        return board[0][2].equals(p) & board[1][1].equals(p) & board[2][0].equals(p);
 
     }
+    boolean isDraw(){
+        return moves.size()>8;
+    }
 
-    boolean getValid(Move move){
+    boolean isValid(Move move){
         return board[move.move[0]][move.move[1]].equals(blankPlayer);
     }
 
@@ -174,14 +174,14 @@ class Board {
 }
 
 class Move {
-    Move(int moveX, int moveY, Player player){
+    private Move(int moveX, int moveY, Player p){
         move = new int[]{moveX, moveY};
-        this.player = player;
+        this.player = p;
     }
 
-    Move(int[] move, Player player){
+    Move(int[] move, Player p){
         this.move = move;
-        this.player = player;
+        player = p;
     }
 
     Player player;
