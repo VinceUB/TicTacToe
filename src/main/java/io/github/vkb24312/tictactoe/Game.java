@@ -5,6 +5,7 @@ import io.github.vkb24312.log.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Game {
@@ -42,7 +43,6 @@ public class Game {
                 //</editor-fold>
 
                 if(board.isWinForPlayer(players[i])){
-                    print(board.printBoard());
                     winner = i;
                     finishGame(winner);
                     break;
@@ -58,6 +58,7 @@ public class Game {
     }
 
     private void finishGame(int winner){
+        print(board.printBoard());
         if(winner<0){
             print("Draw");
             log.log("Game finished in draw");
@@ -146,6 +147,7 @@ class Board {
 
     void registerMove(Move move){
         board[move.move[0]][move.move[1]] = move.player;
+        Game.log.log("Registered move " + Arrays.toString(move.move) + "\nNew map:\n" + this.printBoard());
     }
 
     boolean isWinForPlayer(Player p) {
