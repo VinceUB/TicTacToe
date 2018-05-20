@@ -2,24 +2,27 @@ package io.github.vkb24312.tictactoe;
 
 import io.github.vkb24312.log.Log;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Game {
     private Board board = new Board();
     private Player[] players = new Player[]{new Player('X'), new Player('O')};
-    static Log log = new Log();
+    static Log log;
     private Scanner userInput = new Scanner(System.in);
 
     public static void main(String args[]){
-        Game game = new Game();
-        game.mainMethod();
+        try {
+            Game game = new Game();
+            game.mainMethod(args[0].equals("debug"));
+        } catch (ArrayIndexOutOfBoundsException ignore){
+            Game game = new Game();
+            game.mainMethod(false);
+        }
     }
 
-    private int mainMethod(){
+    private int mainMethod(boolean isDebugMode){
+        log = new Log(isDebugMode);
         int winner = -1;
         while(winner<0){
             for (int i = 0; i < players.length; i++) {
@@ -82,7 +85,7 @@ class Player {
 
     Move chooseMove(Board board, Scanner s){
         Game.print("Please choose a position");
-        String move = s.next();
+        String move = getUserInput(s);
         Game.log.log("Player chosen move " + move);
 
         int moveNum = Move.stringToMove(move);
@@ -109,6 +112,10 @@ class Player {
             Game.log.log("Chosen move not valid. \nStack trace:\n" + stackTrace);
             return null;
         }
+    }
+
+    private String getUserInput(Scanner s){
+        return s.next();
     }
 }
 
